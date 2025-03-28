@@ -40,21 +40,21 @@ class Watcher(Star):
             return []
 
     # 加载缓存群员列表，如果缓存为空则使用请求方法获取列表
-    async def load_members(self):
+    async def load_members(self,event: AstrMessageEvent):
         with open(os.path.join("data","plugins","astrbot_plugin_membercontrast","member_cache.json"), "r", encoding='utf-8-sig') as f:
             self.member_cache = json.load(f)
             if len(self.member_cache) == 0:
                 logger.info("⌛加载成员列表为空，开始获取成员列表")
-                self.member_cache = await self.post_members()
-                with open(os.path.join("data","plugins","astrbot_plugin_membercontrast","member_cache.json"), "w", encoding='utf-8-sig') as f:
-                    json.dump(self.member_cache, f, indent=2, ensure_ascii=False)
+                self.member_cache = await self.post_members(event)
+                with open(os.path.join("data","plugins","astrbot_plugin_membercontrast","member_cache.json"), "w", encoding='utf-8-sig') as a:
+                    json.dump(self.member_cache, a, indent=2, ensure_ascii=False)
 
             return self.member_cache
     # 注册指令的装饰器。指令名为 对比成员。注册成功后，发送 `/对比成员` 就会触发这个指令`
     @filter.command("对比成员")
     async def start(self, event: AstrMessageEvent):
         if event.get_platform_name() == "gewechat": # 判断是否为微信
-            last_member = await self.load_members() # 获取缓存的成员列表
+            last_member = await self.load_members(event) # 获取缓存的成员列表
             member_data = await self.post_members(event) # 获取最新的成员列表
             if member_data == last_member: # 如果缓存的成员列表和最新的成员列表相同，则发送提示消息
                 yield event.plain_result("🕘群成员暂无变化")
