@@ -1,9 +1,29 @@
-# helloworld
+> #### ***还在写QAQ，再等等啦~***
 
-AstrBot 插件模板
+# AstrBot 微信群组群员历史对比
 
-A template plugin for AstrBot plugin feature
+这是一个基于 AstrBot 的插件，实现历史群组群员与当前群员对比的功能。
 
-# 支持
+### 使用方法
 
-[帮助文档](https://astrbot.app)
+---
+
+命令：
+
+`/对比成员`  开始检测群员列表
+
+### 配置
+
+---
+
+当发送 `/对比成员` 时，如果没有历史群员数据，则先拉取数据放入历史记录。下一次发送对比成员命令时，则会从历史记录中读取数据与现在的数据对比。
+
+### 叠甲
+
+---
+
+本项目得到了DeepSeek与通义灵码的大力支持（大雾（ Python小白一只，有点屎山，有问题尽管提Issue，求轻点喷QAQ（）
+
+## 支持
+
+[AstrBot 帮助文档](https://astrbot.app)
