@@ -35,7 +35,7 @@ class Watcher(Star):
                     logger.info(data)
                     members = data.get("data", {}).get("memberList", [])
                     logger.info(members)
-                    return {m["wxid"]: m["nickname"] for m in members}
+                    return {m["wxid"]: m["nickName"] for m in members}
 
         except Exception as e:
             logger.error(f"❌获取成员列表失败: {e}")
