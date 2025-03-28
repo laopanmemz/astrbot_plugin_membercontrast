@@ -43,18 +43,39 @@ class Watcher(Star):
 
     # 加载缓存群员列表，如果缓存为空则使用请求方法获取列表
     async def load_members(self,event: AstrMessageEvent):
-        with open(os.path.join("data","plugins","astrbot_plugin_membercontrast","member_cache.json"), "r", encoding='utf-8-sig') as f:
-            self.member_cache = json.load(f)
-            if len(self.member_cache) == 0:
-                logger.info("⌛加载成员列表为空，开始获取成员列表")
-                self.member_cache = await self.post_members(event)
-                with open(os.path.join("data","plugins","astrbot_plugin_membercontrast","member_cache.json"), "w", encoding='utf-8-sig') as a:
-                    json.dump(self.member_cache, a, indent=2, ensure_ascii=False)
+        # 创建缓存目录（如果不存在）
+        cache_dir = os.path.join("data", "plugins", "astrbot_plugin_membercontrast", "member-cache")
+        os.makedirs(cache_dir, exist_ok=True)
 
-            return self.member_cache
+        # 获取当前群组ID
+        group_id = event.get_group_id()
+
+        # 构造群组专属缓存文件路径
+        cache_file = os.path.join(cache_dir, f"member_cache_{group_id}.json")
+        try:
+            # 读取缓存文件
+            with open(cache_file, "r", encoding='utf-8-sig') as f:
+                self.member_cache = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            # 文件不存在或内容无效时初始化空缓存
+            self.member_cache = {}
+
+        # 如果缓存为空则获取新数据
+        if not self.member_cache:
+            logger.info(f"⌛群组 {group_id} 无缓存，开始获取成员列表")
+            self.member_cache = await self.post_members(event)
+            # 写入新缓存
+            with open(cache_file, "w", encoding='utf-8-sig') as a:
+                json.dump(self.member_cache, a, indent=2, ensure_ascii=False)
+
+        return self.member_cache
+
     # 注册指令的装饰器。指令名为 对比成员。注册成功后，发送 `/对比成员` 就会触发这个指令`
     @filter.command("对比成员")
     async def start(self, event: AstrMessageEvent):
+        cache_dir = os.path.join("data", "plugins", "astrbot_plugin_membercontrast", "member-cache")
+        cache_file = os.path.join(cache_dir, f"member_cache_{event.get_group_id()}.json")
+
         if event.get_platform_name() == "gewechat": # 判断是否为微信
             last_member = await self.load_members(event) # 获取缓存的成员列表
             member_data = await self.post_members(event) # 获取最新的成员列表
@@ -75,7 +96,7 @@ class Watcher(Star):
                 if added_nicknames: # 如果有新增的成员，则发送提示消息
                     yield event.plain_result(f"🎉有新成员入群：{', '.join(added_nicknames)}")
                 if removed_nicknames or added_nicknames: # 如果有变化，就把最新的成员列表覆盖进member_cache.json
-                    with open(os.path.join("data","plugins","astrbot_plugin_membercontrast","member_cache.json"), "w", encoding='utf-8-sig') as f:
+                    with open(cache_file, "w", encoding='utf-8-sig') as f:
                         json.dump(member_data, f, indent=2, ensure_ascii=False)
                         logger.info("✅成功更新缓存成员列表！")
 
