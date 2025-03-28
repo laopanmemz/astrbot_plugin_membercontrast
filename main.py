@@ -32,7 +32,9 @@ class Watcher(Star):
                         logger.error(f"❌获取成员列表失败，状态码: {resp.status}")
                         return []
                     data = await resp.json()
+                    logger.info(data)
                     members = data.get("data", {}).get("memberList", [])
+                    logger.info(members)
                     return {m["wxid"]: m["nickname"] for m in members}
 
         except Exception as e:
@@ -81,7 +83,7 @@ class Watcher(Star):
             yield event.plain_result("\n⚠检测功能仅支持微信......\nQQ都有 退群通知 和 Q群管家入群欢迎功能 了，你还要这个干啥？（（大雾")
             event.stop_event()
             return
-        if event.get_platform_name() != "gewechat" or event.get_platform_name() != "aiocqhttp":
+        if event.get_platform_name() != "gewechat" and event.get_platform_name() != "aiocqhttp":
             yield event.plain_result("\n⚠检测功能仅支持微信......")
             event.stop_event()
             return 
