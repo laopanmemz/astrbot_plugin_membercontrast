@@ -1,6 +1,6 @@
 name: astrbot_plugin_membercontrast
 desc: AstrBot 微信群组群员历史对比
 help: 输入 /对比成员 开始检测。
-version: v1.0.0
+version: v1.1.0
 author: laopanmemz
 repo: https://github.com/laopanmemz/astrbot_plugin_membercontrast
