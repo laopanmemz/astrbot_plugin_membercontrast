@@ -52,6 +52,8 @@ class Watcher(Star):
 
         # 构造群组专属缓存文件路径
         cache_file = os.path.join(cache_dir, f"member_cache_{group_id}.json")
+        if not os.path.exists(cache_dir):
+            os.makedirs(cache_dir)  # 确保目录存在
         try:
             # 读取缓存文件
             with open(cache_file, "r", encoding='utf-8-sig') as f:
