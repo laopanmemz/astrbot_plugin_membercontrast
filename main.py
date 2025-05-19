@@ -5,9 +5,10 @@ from astrbot.api import logger
 from astrbot.api.event import filter, AstrMessageEvent
 from astrbot.api.star import Context, Star, register
 from astrbot.core.platform.sources.wechatpadpro.wechatpadpro_message_event import WeChatPadProMessageEvent
+from astrbot.api.star import StarTools
 
 
-@register("astrbot_plugin_membercontrast", "laopanmemz", "微信群组群员历史对比", "1.1.0")
+@register("astrbot_plugin_membercontrast", "laopanmemz", "微信群组群员历史对比", "1.2.0")
 class Watcher(Star):
     def __init__(self, context: Context):
         super().__init__(context)
@@ -43,9 +44,8 @@ class Watcher(Star):
 
     # 加载缓存群员列表，如果缓存为空则使用请求方法获取列表
     async def load_members(self,event: AstrMessageEvent):
-        # 创建缓存目录（如果不存在）
-        cache_dir = os.path.join("data", "member-cache")
-        os.makedirs(cache_dir, exist_ok=True)
+        # 创建缓存目录
+        cache_dir = os.path.join(StarTools.get_data_dir(), "member-cache")
 
         # 获取当前群组ID
         group_id = event.get_group_id()
@@ -73,7 +73,7 @@ class Watcher(Star):
     # 注册指令的装饰器。指令名为 对比成员。注册成功后，发送 `/对比成员` 就会触发这个指令`
     @filter.command("对比成员",alias={"成员对比", "检查成员", "群员对比", "对比群员", "差异对比", "对比群成员"})
     async def start(self, event: AstrMessageEvent):
-        cache_dir = os.path.join("data", "member-cache")
+        cache_dir = os.path.join(StarTools.get_data_dir(), "member-cache")
         cache_file = os.path.join(cache_dir, f"member_cache_{event.get_group_id()}.json")
 
         if event.get_platform_name() == "wechatpadpro": # 判断是否为微信

@@ -22,7 +22,7 @@
 
 当发送检测命令时，如果没有历史群员数据，则先拉取数据放入历史缓存记录。下一次发送对比成员命令时，则会从历史缓存记录中读取数据与现在的数据对比。
 
-成员数据缓存会新建在AstrBot/data目录下的 member-cache 文件夹，缓存文件以 member_cache_{group_id}.json 命名。
+成员数据缓存会新建在AstrBot/data/plugin_data目录下的 member-cache 文件夹，缓存文件以 member_cache_{group_id}.json 命名。
 
 ### 叠甲
 
